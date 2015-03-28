@@ -20,10 +20,14 @@ __published:	// IDE-managed Components
 	TMenuItem *N41;
 	TMenuItem *N1;
 	TMenuItem *About1;
+	TMemo *Memo1;
+	TEdit *Edit1;
 	void __fastcall N41Click(TObject *Sender);
 	void __fastcall N11Click(TObject *Sender);
 	void __fastcall N21Click(TObject *Sender);
 	void __fastcall About1Click(TObject *Sender);
+	void __fastcall TrayIcon1DblClick(TObject *Sender);
+	void __fastcall OnAppMinimize(TObject *Sender);
 private:	// User declarations
 public:		// User declarations
 	__fastcall TMainForm(TComponent* Owner);

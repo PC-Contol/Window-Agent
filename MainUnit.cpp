@@ -20,6 +20,7 @@ __fastcall TMainForm::TMainForm(TComponent* Owner)
 	this->Visible = True;
 	Application->Minimize();
 	ShowWindow(Application->Handle, SW_HIDE);
+	Application->OnMinimize = OnAppMinimize;
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainForm::N41Click(TObject *Sender)
@@ -46,4 +47,25 @@ void __fastcall TMainForm::About1Click(TObject *Sender)
 	AboutBox->Show();
 }
 //---------------------------------------------------------------------------
+
+
+void __fastcall TMainForm::TrayIcon1DblClick(TObject *Sender)
+{
+	bool bCtrlKeyDown  = GetAsyncKeyState( VK_CONTROL )>>((sizeof(SHORT)*8)-1);
+	if(bCtrlKeyDown)
+	{
+		ShowWindow(Application->Handle, SW_SHOW);
+		Application->NormalizeAllTopMosts();
+		Application->Restore();
+	}
+}
+//---------------------------------------------------------------------------
+
+
+void __fastcall TMainForm::OnAppMinimize(TObject *Sender)
+{
+	ShowWindow(Application->Handle, SW_HIDE);
+	Application->Minimize();
+}
+
 

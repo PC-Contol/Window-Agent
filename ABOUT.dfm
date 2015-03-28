@@ -3,7 +3,7 @@ object AboutBox: TAboutBox
   Top = 108
   BorderStyle = bsDialog
   Caption = 'About'
-  ClientHeight = 213
+  ClientHeight = 275
   ClientWidth = 298
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -19,7 +19,7 @@ object AboutBox: TAboutBox
     Left = 8
     Top = 8
     Width = 281
-    Height = 161
+    Height = 222
     BevelInner = bvRaised
     BevelOuter = bvLowered
     ParentColor = True
@@ -910,7 +910,7 @@ object AboutBox: TAboutBox
       Top = 40
       Width = 53
       Height = 13
-      Caption = 'Version 1.0'
+      Caption = 'Version 1.1'
       IsControl = True
     end
     object Copyright: TLabel
@@ -925,15 +925,15 @@ object AboutBox: TAboutBox
       Left = 8
       Top = 128
       Width = 259
-      Height = 13
+      Height = 73
       Caption = #49900#49900#54644#49436' '#47564#46308#50612#48376' HTTP'#44592#48152#51032' PC'#51228#50612' '#54532#47196#44536#47016
       WordWrap = True
       IsControl = True
     end
   end
   object OKButton: TButton
-    Left = 111
-    Top = 180
+    Left = 119
+    Top = 236
     Width = 75
     Height = 25
     Caption = 'OK'

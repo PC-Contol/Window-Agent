@@ -2,6 +2,7 @@
 
 #include <vcl.h>
 #pragma hdrstop
+#include <DBXJSON.hpp>
 #include "MainUnit.h"
 #include "WebServerThread.h"
 #include "VolumeControlcpp.h"
@@ -102,8 +103,33 @@ void __fastcall WebServerThread::ProcCMD(String LFileName, TIdHTTPResponseInfo *
    else if(LFileName.UpperCase().SubString(0, 7) == "VOL_GET")
    {
 		AnsiString currVol =  GetVolume();
+
 		AResponseInfo->ContentText = "<H1>"+ currVol +"</H1>";
 		AResponseInfo->WriteContent();
+
+		/*
+		AnsiString returnVal = "";
+		TJSONArray* LJsonArr = (TJSONArray*)TJSONObject::ParseJSONValue(
+		BytesOf((UnicodeString)"[{\"EventType\":49,\"Code\":\"234\",\"EventDate\":\"20050202\", \"Result\":1},  {\"EventType\":48,\"Code\":\"0120\",\"EventDate\":\"20130201\", \"Group\":\"g1\"}]"),0);
+		int size = LJsonArr->Size();
+		for (int i = 0; i < size; ++i)
+		{
+		  TJSONValue* LJsonValue = LJsonArr->Get(i);
+		  TJSONArray*  LJsonArr2 =  (TJSONArray*)LJsonValue;
+		  int size2 = LJsonArr2->Size();
+			for (int j = 0; j < size2; ++j)
+			{
+			  TJSONValue* LItem   = LJsonArr2->Get(j);
+			  TJSONPair* LPair = (TJSONPair*)LItem;
+			  returnVal += (UTF8String )(LPair->JsonString->Value()).c_str() + " : " + (UTF8String )(LPair->JsonValue->Value()).c_str() + "<br />";
+			  //printf("%s %s \n", (UTF8String )(LPair->JsonString->Value()).c_str(),  (UTF8String )(LPair->JsonValue->Value()).c_str());
+			}
+			returnVal += "<br />";
+		}
+
+		AResponseInfo->ContentText = returnVal;
+		AResponseInfo->WriteContent();
+		*/
    }
 }
 

@@ -1,4 +1,12 @@
 .\Win64\Release\WebServerThread.o: WebServerThread.cpp \
+  c:\program\ files\ (x86)\embarcadero\studio\15.0\include\windows\rtl\DBXJSON.hpp \
+  c:\program\ files\ (x86)\embarcadero\studio\15.0\include\windows\rtl\Data.DBXJSON.hpp \
+  c:\program\ files\ (x86)\embarcadero\studio\15.0\include\windows\rtl\Data.DBXPlatform.hpp \
+  c:\program\ files\ (x86)\embarcadero\studio\15.0\include\windows\rtl\Data.FmtBcd.hpp \
+  c:\program\ files\ (x86)\embarcadero\studio\15.0\include\windows\rtl\Data.SqlTimSt.hpp \
+  c:\program\ files\ (x86)\embarcadero\studio\15.0\include\windows\rtl\System.JSON.hpp \
+  c:\program\ files\ (x86)\embarcadero\studio\15.0\include\windows\rtl\System.Rtti.hpp \
+  c:\program\ files\ (x86)\embarcadero\studio\15.0\include\windows\rtl\SystemRtti.h \
   D:\DEV\PC_Control/MainUnit.h D:\DEV\PC_Control/WebServerThread.h \
   c:\program\ files\ (x86)\embarcadero\studio\15.0\include\windows\rtl\IdHTTPServer.hpp \
   c:\program\ files\ (x86)\embarcadero\studio\15.0\include\windows\rtl\IdCustomHTTPServer.hpp \

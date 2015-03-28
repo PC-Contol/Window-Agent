@@ -51,6 +51,26 @@ object MainForm: TMainForm
   Visible = True
   PixelsPerInch = 96
   TextHeight = 25
+  object Memo1: TMemo
+    Left = 0
+    Top = 33
+    Width = 635
+    Height = 304
+    Align = alClient
+    TabOrder = 0
+    ExplicitTop = 48
+    ExplicitHeight = 241
+  end
+  object Edit1: TEdit
+    Left = 0
+    Top = 0
+    Width = 635
+    Height = 33
+    Align = alTop
+    TabOrder = 1
+    ExplicitLeft = 40
+    ExplicitWidth = 121
+  end
   object TrayIcon1: TTrayIcon
     Animate = True
     Icon.Data = {
@@ -92,6 +112,7 @@ object MainForm: TMainForm
       FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF}
     PopupMenu = PopupMenu1
     Visible = True
+    OnDblClick = TrayIcon1DblClick
     Left = 176
     Top = 48
   end
