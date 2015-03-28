@@ -4,6 +4,7 @@
 #pragma hdrstop
 #include "MainUnit.h"
 #include "WebServerThread.h"
+#include "VolumeControlcpp.h"
 #pragma package(smart_init)
 //---------------------------------------------------------------------------
 
@@ -90,7 +91,20 @@ void __fastcall WebServerThread::ProcCMD(String LFileName, TIdHTTPResponseInfo *
 		AResponseInfo->WriteContent();
 		MyShutDownSystem(EWX_REBOOT);
    }
+   else if(LFileName.UpperCase().SubString(0, 7) == "VOL_SET")
+   {
+		AnsiString sVol =  LFileName.UpperCase().SubString(9,LFileName.Length() );
+		AResponseInfo->ContentText = "<H1>"+sVol+"</H1>";
+		AResponseInfo->WriteContent();
 
+		ChangeVolume((double)sVol.ToDouble()/100, true);
+   }
+   else if(LFileName.UpperCase().SubString(0, 7) == "VOL_GET")
+   {
+		AnsiString currVol =  GetVolume();
+		AResponseInfo->ContentText = "<H1>"+ currVol +"</H1>";
+		AResponseInfo->WriteContent();
+   }
 }
 
 
