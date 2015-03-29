@@ -3,6 +3,7 @@
 #include <vcl.h>
 #pragma hdrstop
 #include <DBXJSON.hpp>
+#include <jpeg.hpp>
 #include "MainUnit.h"
 #include "WebServerThread.h"
 #include "VolumeControlcpp.h"
@@ -151,6 +152,51 @@ void __fastcall WebServerThread::ProcCMD(String LFileName, TIdHTTPResponseInfo *
 		resolution->AddPair("monitor", monitors);
 	   	AResponseInfo->ContentType ="application/json ";
 		AResponseInfo->ContentText =  resolution->ToJSON() ;
+		AResponseInfo->WriteContent();
+	}
+	else if(LFileName.UpperCase() == "GET_DESKTOP")
+	{
+		int Monitor = 0;
+		Graphics::TBitmap *bmp = new Graphics::TBitmap;
+		TJPEGImage* jpg = new TJPEGImage();
+
+					bmp->Width = Screen->Monitors[Monitor]->Width / 4;
+			bmp->Height = Screen->Monitors[Monitor]->Height / 4;
+			bmp->PixelFormat = pf24bit;
+
+			SetStretchBltMode(bmp->Canvas->Handle, HALFTONE);
+			StretchBlt(bmp->Canvas->Handle, 0, 0, bmp->Width, bmp->Height, GetDC(0),
+				Screen->Monitors[Monitor]->Left,  Screen->Monitors[Monitor]->Top,
+				Screen->Monitors[Monitor]->Width, Screen->Monitors[Monitor]->Height,
+				SRCCOPY);
+
+			bmp->Canvas->Brush->Color = 0x000000;
+			bmp->Canvas->Brush->Style << bsSolid;
+			bmp->Canvas->Font->Size  = 11;
+			bmp->Canvas->Font->Style << fsBold;
+			bmp->Canvas->Font->Color = 0xffffff;
+			bmp->Canvas->TextOut(1, 1, " [] " +
+								 FormatDateTime("yyyy/mm/dd hh:nn:ss", Now()));
+
+			jpg->Assign(bmp);
+			jpg->CompressionQuality = 80;
+			jpg->Compress();
+
+			TMemoryStream *ms = new TMemoryStream();
+			ms->SaveToStream(jpg);
+			//jpg->SaveToFile(FileName);
+		AResponseInfo->ContentType ="multipart/form-data";
+		AResponseInfo->ContentStream->CopyFrom(ms, ms->Size);
+		AResponseInfo->WriteContent();
+
+	}
+	else
+	{
+		TJSONObject *result = new TJSONObject();
+		result->AddPair(new TJSONPair("result", "failed") );
+		AResponseInfo->ContentType ="application/json";
+		AResponseInfo->ResponseNo = 404;
+		AResponseInfo->ContentText =  result->ToJSON() ;
 		AResponseInfo->WriteContent();
 	}
 
