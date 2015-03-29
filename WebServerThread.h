@@ -20,7 +20,7 @@ public:
 	void __fastcall IdHTTPServer1CommandGet(TIdContext *AContext, TIdHTTPRequestInfo *ARequestInfo, TIdHTTPResponseInfo *AResponseInfo);
 	void __fastcall ProcCMD(String cmd, TIdHTTPResponseInfo *AResponseInfo);
     void __fastcall MyShutDownSystem(int iFlag);
-	__fastcall WebServerThread();
+	__fastcall WebServerThread(SystemInfo *pSi);
 };
 
 //---------------------------------------------------------------------------

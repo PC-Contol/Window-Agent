@@ -9,6 +9,41 @@
 #include <Vcl.Forms.hpp>
 #include <Vcl.ExtCtrls.hpp>
 #include <Vcl.Menus.hpp>
+
+typedef struct
+{
+	int pid;
+	String name;
+	String path;
+	String param;
+	bool use;
+
+} TAppInfo;
+
+typedef struct
+{
+	int TotalCount;
+	int UseCount;
+	AnsiString Version;
+	int ProcCheckTime;
+	int UpdateCheckTime;
+	TAppInfo List[16];
+} TAppList;
+
+typedef struct
+{
+	ULONGLONG Use;
+	ULONGLONG Total;
+} DiskInfo;
+
+typedef struct
+{
+	float UseCpu;
+	DiskInfo Mem;
+	DiskInfo Hdd;
+} SystemInfo;
+
+
 //---------------------------------------------------------------------------
 class TMainForm : public TForm
 {
@@ -28,9 +63,12 @@ __published:	// IDE-managed Components
 	void __fastcall About1Click(TObject *Sender);
 	void __fastcall TrayIcon1DblClick(TObject *Sender);
 	void __fastcall OnAppMinimize(TObject *Sender);
+	void __fastcall FormCreate(TObject *Sender);
 private:	// User declarations
 public:		// User declarations
+	void __fastcall LogMemoAdd(String str);
 	__fastcall TMainForm(TComponent* Owner);
+	SystemInfo si;
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TMainForm *MainForm;

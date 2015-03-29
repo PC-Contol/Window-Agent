@@ -9,8 +9,8 @@
 #include "VolumeControlcpp.h"
 #pragma package(smart_init)
 //---------------------------------------------------------------------------
-
-__fastcall WebServerThread::WebServerThread()
+SystemInfo *si;
+__fastcall WebServerThread::WebServerThread(SystemInfo *pSi)
 	: TThread(false)
 {
 	try
@@ -19,6 +19,7 @@ __fastcall WebServerThread::WebServerThread()
 		IdHTTPServer1->DefaultPort = 9090;
 		IdHTTPServer1->OnCommandGet = IdHTTPServer1CommandGet;
 		IdHTTPServer1->Active = true;
+		si = pSi;
 
 	}
 	catch(Exception &e)
@@ -154,14 +155,16 @@ void __fastcall WebServerThread::ProcCMD(String LFileName, TIdHTTPResponseInfo *
 		AResponseInfo->ContentText =  resolution->ToJSON() ;
 		AResponseInfo->WriteContent();
 	}
-	else if(LFileName.UpperCase() == "GET_DESKTOP")
+	else if(LFileName.UpperCase() == "GET_DESKTOP.JPG")
 	{
 		int Monitor = 0;
 		Graphics::TBitmap *bmp = new Graphics::TBitmap;
 		TJPEGImage* jpg = new TJPEGImage();
-
-					bmp->Width = Screen->Monitors[Monitor]->Width / 4;
-			bmp->Height = Screen->Monitors[Monitor]->Height / 4;
+		TStream *ms = new TMemoryStream();
+		try
+		{
+			bmp->Width = Screen->Monitors[Monitor]->Width / 2;
+			bmp->Height = Screen->Monitors[Monitor]->Height / 2;
 			bmp->PixelFormat = pf24bit;
 
 			SetStretchBltMode(bmp->Canvas->Handle, HALFTONE);
@@ -175,21 +178,36 @@ void __fastcall WebServerThread::ProcCMD(String LFileName, TIdHTTPResponseInfo *
 			bmp->Canvas->Font->Size  = 11;
 			bmp->Canvas->Font->Style << fsBold;
 			bmp->Canvas->Font->Color = 0xffffff;
-			bmp->Canvas->TextOut(1, 1, " [] " +
-								 FormatDateTime("yyyy/mm/dd hh:nn:ss", Now()));
+			bmp->Canvas->TextOut(1, 1, " [] " + FormatDateTime("yyyy/mm/dd hh:nn:ss", Now()));
 
 			jpg->Assign(bmp);
 			jpg->CompressionQuality = 80;
 			jpg->Compress();
+			jpg->SaveToStream(ms);
 
-			TMemoryStream *ms = new TMemoryStream();
-			ms->SaveToStream(jpg);
-			//jpg->SaveToFile(FileName);
-		AResponseInfo->ContentType ="multipart/form-data";
-		AResponseInfo->ContentStream->CopyFrom(ms, ms->Size);
-		AResponseInfo->WriteContent();
-
+			AResponseInfo->ContentType ="image/jpeg";
+			AResponseInfo->ContentStream = ms;
+		}
+		__finally
+		{
+			jpg->Free();
+			bmp->Free();
+		}
 	}
+	else if(LFileName.UpperCase() == "GET_SYSTEMINFO")
+	{
+ 		TJSONObject *result = new TJSONObject();
+		result->AddPair(new TJSONPair("result", "success") );
+		result->AddPair(new TJSONPair("cpu", si->UseCpu) );
+		result->AddPair(new TJSONPair("rem-total", si->Mem.Total) );
+		result->AddPair(new TJSONPair("rem-use", si->Mem.Use) );
+		result->AddPair(new TJSONPair("hdd-total", si->Hdd.Total) );
+		result->AddPair(new TJSONPair("hdd-use", si->Hdd.Use) );
+		AResponseInfo->ContentType ="application/json";
+	   //	AResponseInfo->ResponseNo = 404;
+		AResponseInfo->ContentText =  result->ToJSON() ;
+		AResponseInfo->WriteContent();
+    }
 	else
 	{
 		TJSONObject *result = new TJSONObject();

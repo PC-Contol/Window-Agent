@@ -171,6 +171,10 @@
             <DependentOn>MainUnit.h</DependentOn>
             <BuildOrder>2</BuildOrder>
         </CppCompile>
+        <CppCompile Include="SystemInfoThread.cpp">
+            <DependentOn>SystemInfoThread.h</DependentOn>
+            <BuildOrder>6</BuildOrder>
+        </CppCompile>
         <CppCompile Include="VolumeControlcpp.cpp">
             <DependentOn>VolumeControlcpp.h</DependentOn>
             <BuildOrder>5</BuildOrder>

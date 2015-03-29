@@ -49,6 +49,7 @@ object MainForm: TMainForm
     FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF}
   OldCreateOrder = False
   Visible = True
+  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 25
   object Memo1: TMemo
@@ -58,8 +59,6 @@ object MainForm: TMainForm
     Height = 304
     Align = alClient
     TabOrder = 0
-    ExplicitTop = 48
-    ExplicitHeight = 241
   end
   object Edit1: TEdit
     Left = 0
@@ -68,8 +67,6 @@ object MainForm: TMainForm
     Height = 33
     Align = alTop
     TabOrder = 1
-    ExplicitLeft = 40
-    ExplicitWidth = 121
   end
   object TrayIcon1: TTrayIcon
     Animate = True

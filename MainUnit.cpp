@@ -5,22 +5,26 @@
 
 #include "MainUnit.h"
 #include "WebServerThread.h"
+#include "SystemInfoThread.h"
 #include "About.h"
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"
 TMainForm *MainForm;
 WebServerThread *wst;
+SystemInfoThread *sit;
+
 //---------------------------------------------------------------------------
 __fastcall TMainForm::TMainForm(TComponent* Owner)
 	: TForm(Owner)
 {
-	wst = new WebServerThread();
+
 	Application->ShowMainForm = False;
 	this->Visible = True;
 	Application->Minimize();
 	ShowWindow(Application->Handle, SW_HIDE);
 	Application->OnMinimize = OnAppMinimize;
+
 }
 //---------------------------------------------------------------------------
 void __fastcall TMainForm::N41Click(TObject *Sender)
@@ -68,5 +72,20 @@ void __fastcall TMainForm::OnAppMinimize(TObject *Sender)
 	Application->Minimize();
 }
 
+void __fastcall TMainForm::LogMemoAdd(String str)
+{
+	String time = FormatDateTime("[yyyy/mm/dd hh:nn:ss]", Now());
+	Memo1->Lines->Add(time + " " + str);
+	if(Memo1->Lines->Count > 4000) Memo1->Clear();
+}
 
+
+
+void __fastcall TMainForm::FormCreate(TObject *Sender)
+{
+	LogMemoAdd("FormCreate()");
+	sit = new SystemInfoThread(&si);
+	wst = new WebServerThread(&si);
+}
+//---------------------------------------------------------------------------
 
