@@ -6,6 +6,7 @@
 #include <System.Classes.hpp>
 #include <IdHTTPServer.hpp>
 #include <IdCustomHTTPServer.hpp>
+#include <MultiMon.h>
 //---------------------------------------------------------------------------
 
 

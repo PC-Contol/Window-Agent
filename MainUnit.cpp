@@ -69,3 +69,4 @@ void __fastcall TMainForm::OnAppMinimize(TObject *Sender)
 }
 
 
+

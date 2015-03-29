@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 
 #pragma hdrstop
-#include<Windows.h>
+#include <Windows.h>
 #include <mmdeviceapi.h>
 #include <endpointvolume.h>
 #include "VolumeControlcpp.h"
@@ -36,14 +36,8 @@ bool ChangeVolume(double nVolume,bool bScalar)
     // -------------------------
 	float currentVolume = 0;
 	endpointVolume->GetMasterVolumeLevel(&currentVolume);
-	//printf("Current volume in dB is: %f\n", currentVolume);
-
 	hr = endpointVolume->GetMasterVolumeLevelScalar(&currentVolume);
-	//CString strCur=L"";
-	//strCur.Format(L"%f",currentVolume);
-	//AfxMessageBox(strCur);
 
-	// printf("Current volume as a scalar is: %f\n", currentVolume);
 	if (bScalar==false)
 	{
 		hr = endpointVolume->SetMasterVolumeLevel((float)newVolume, NULL);

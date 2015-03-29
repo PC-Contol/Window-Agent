@@ -80,58 +80,82 @@ void __fastcall WebServerThread::MyShutDownSystem(int iFlag)
 void __fastcall WebServerThread::ProcCMD(String LFileName, TIdHTTPResponseInfo *AResponseInfo)
 {
 
-   if(LFileName.UpperCase() == "SHUTDOWN")
-   {
-		AResponseInfo->ContentText = "<H1>SHUTDOWN</H1>";
+	if(LFileName.UpperCase() == "SHUTDOWN")
+	{
+		TJSONObject *result = new TJSONObject();
+		result->AddPair(new TJSONPair("result", "success") );
+		result->AddPair(new TJSONPair("cmd",LFileName) );
+
+		AResponseInfo->ContentType ="application/json ";
+		AResponseInfo->ContentText =  result->ToJSON() ;
 		AResponseInfo->WriteContent();
+
 		MyShutDownSystem(EWX_SHUTDOWN);
-   }
-   else if(LFileName.UpperCase() == "REBOOT")
-   {
-		AResponseInfo->ContentText = "<H1>REBOOT</H1>";
+	}
+	else if(LFileName.UpperCase() == "REBOOT")
+	{
+		TJSONObject *result = new TJSONObject();
+		result->AddPair(new TJSONPair("result", "success") );
+		result->AddPair(new TJSONPair("cmd",LFileName) );
+
+		AResponseInfo->ContentType ="application/json ";
+		AResponseInfo->ContentText =  result->ToJSON() ;
 		AResponseInfo->WriteContent();
+
 		MyShutDownSystem(EWX_REBOOT);
-   }
-   else if(LFileName.UpperCase().SubString(0, 7) == "VOL_SET")
-   {
+	}
+	else if(LFileName.UpperCase().SubString(0, 7) == "SET_VOL")
+	{
 		AnsiString sVol =  LFileName.UpperCase().SubString(9,LFileName.Length() );
-		AResponseInfo->ContentText = "<H1>"+sVol+"</H1>";
-		AResponseInfo->WriteContent();
-
 		ChangeVolume((double)sVol.ToDouble()/100, true);
-   }
-   else if(LFileName.UpperCase().SubString(0, 7) == "VOL_GET")
-   {
-		AnsiString currVol =  GetVolume();
 
-		AResponseInfo->ContentText = "<H1>"+ currVol +"</H1>";
+		TJSONObject *result = new TJSONObject();
+		result->AddPair(new TJSONPair("result", "success") );
+		result->AddPair(new TJSONPair("preVolume", GetVolume() * 100 ) );
+		result->AddPair(new TJSONPair("setVolume", sVol) );
+
+		AResponseInfo->ContentType ="application/json ";
+		AResponseInfo->ContentText =  result->ToJSON() ;
 		AResponseInfo->WriteContent();
+	}
+	else if(LFileName.UpperCase().SubString(0, 7) == "GET_VOL")
+	{
+		TJSONObject *result = new TJSONObject();
+		result->AddPair(new TJSONPair("result", "success") );
+		result->AddPair(new TJSONPair("volume", GetVolume()) );
 
-		/*
-		AnsiString returnVal = "";
-		TJSONArray* LJsonArr = (TJSONArray*)TJSONObject::ParseJSONValue(
-		BytesOf((UnicodeString)"[{\"EventType\":49,\"Code\":\"234\",\"EventDate\":\"20050202\", \"Result\":1},  {\"EventType\":48,\"Code\":\"0120\",\"EventDate\":\"20130201\", \"Group\":\"g1\"}]"),0);
-		int size = LJsonArr->Size();
-		for (int i = 0; i < size; ++i)
+		AResponseInfo->ContentType ="application/json ";
+		AResponseInfo->ContentText =  result->ToJSON() ;
+		AResponseInfo->WriteContent();
+	}
+	else if(LFileName.UpperCase() == "GET_RESOLUTION")
+	{
+		MONITORINFOEXW MonitorInfoEx;
+
+		TJSONObject *resolution = new TJSONObject();
+		resolution->AddPair(new TJSONPair("result", "success") );
+		resolution->AddPair(new TJSONPair("monitor_count",Screen->MonitorCount) );
+
+		TJSONArray *monitors = new TJSONArray();
+		MonitorInfoEx.cbSize = sizeof(MONITORINFOEXW);
+		for(int i=0; i<Screen->MonitorCount; i++)
 		{
-		  TJSONValue* LJsonValue = LJsonArr->Get(i);
-		  TJSONArray*  LJsonArr2 =  (TJSONArray*)LJsonValue;
-		  int size2 = LJsonArr2->Size();
-			for (int j = 0; j < size2; ++j)
-			{
-			  TJSONValue* LItem   = LJsonArr2->Get(j);
-			  TJSONPair* LPair = (TJSONPair*)LItem;
-			  returnVal += (UTF8String )(LPair->JsonString->Value()).c_str() + " : " + (UTF8String )(LPair->JsonValue->Value()).c_str() + "<br />";
-			  //printf("%s %s \n", (UTF8String )(LPair->JsonString->Value()).c_str(),  (UTF8String )(LPair->JsonValue->Value()).c_str());
-			}
-			returnVal += "<br />";
+			TJSONObject *monitor = new TJSONObject();
+			GetMonitorInfoW(Screen->Monitors[i]->Handle, &MonitorInfoEx);
+			monitor->AddPair(new TJSONPair("handle",(const)Screen->Monitors[i]->Handle ));
+			monitor->AddPair(new TJSONPair("device",MonitorInfoEx.szDevice));
+			monitor->AddPair(new TJSONPair("width",Screen->Monitors[i]->Width));
+			monitor->AddPair(new TJSONPair("height",Screen->Monitors[i]->Height));
+			monitors->Add(monitor);
 		}
-
-		AResponseInfo->ContentText = returnVal;
+		resolution->AddPair("monitor", monitors);
+	   	AResponseInfo->ContentType ="application/json ";
+		AResponseInfo->ContentText =  resolution->ToJSON() ;
 		AResponseInfo->WriteContent();
-		*/
-   }
-}
+	}
 
+
+
+}
 
 
