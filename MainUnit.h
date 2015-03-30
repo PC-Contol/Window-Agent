@@ -9,6 +9,7 @@
 #include <Vcl.Forms.hpp>
 #include <Vcl.ExtCtrls.hpp>
 #include <Vcl.Menus.hpp>
+#include <Vcl.Buttons.hpp>
 
 typedef struct
 {
@@ -57,6 +58,8 @@ __published:	// IDE-managed Components
 	TMenuItem *About1;
 	TMemo *Memo1;
 	TEdit *Edit1;
+	TSpeedButton *SpeedButton1;
+	TPanel *Panel1;
 	void __fastcall N41Click(TObject *Sender);
 	void __fastcall N11Click(TObject *Sender);
 	void __fastcall N21Click(TObject *Sender);
@@ -65,10 +68,14 @@ __published:	// IDE-managed Components
 	void __fastcall OnAppMinimize(TObject *Sender);
 	void __fastcall FormCreate(TObject *Sender);
 private:	// User declarations
+  void __fastcall WMDiaplayChange(TMessage& Msg);
 public:		// User declarations
 	void __fastcall LogMemoAdd(String str);
 	__fastcall TMainForm(TComponent* Owner);
 	SystemInfo si;
+BEGIN_MESSAGE_MAP
+  MESSAGE_HANDLER(WM_DISPLAYCHANGE, TMessage, WMDiaplayChange)
+END_MESSAGE_MAP(TForm)
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TMainForm *MainForm;

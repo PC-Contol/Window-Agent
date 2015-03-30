@@ -4,7 +4,7 @@
 #include <Windows.h>
 #include <mmdeviceapi.h>
 #include <endpointvolume.h>
-#include "VolumeControlcpp.h"
+#include "VolumeControl.h"
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 

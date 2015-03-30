@@ -2,7 +2,7 @@ object MainForm: TMainForm
   Left = 0
   Top = 0
   Caption = 'BOKJJANG Controller'
-  ClientHeight = 337
+  ClientHeight = 444
   ClientWidth = 635
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -56,17 +56,40 @@ object MainForm: TMainForm
     Left = 0
     Top = 33
     Width = 635
-    Height = 304
+    Height = 411
     Align = alClient
     TabOrder = 0
+    ExplicitLeft = 8
+    ExplicitTop = 127
+    ExplicitHeight = 226
   end
-  object Edit1: TEdit
+  object Panel1: TPanel
     Left = 0
     Top = 0
     Width = 635
     Height = 33
     Align = alTop
+    Caption = 'Panel1'
     TabOrder = 1
+    object SpeedButton1: TSpeedButton
+      Left = 577
+      Top = 1
+      Width = 57
+      Height = 31
+      Align = alClient
+      ExplicitLeft = 1
+      ExplicitTop = 17
+      ExplicitWidth = 304
+      ExplicitHeight = 23
+    end
+    object Edit1: TEdit
+      Left = 1
+      Top = 1
+      Width = 576
+      Height = 31
+      Align = alLeft
+      TabOrder = 0
+    end
   end
   object TrayIcon1: TTrayIcon
     Animate = True

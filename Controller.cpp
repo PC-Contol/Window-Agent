@@ -12,7 +12,7 @@ int WINAPI _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
 	try
 	{
 		Application->Initialize();
-		Application->MainFormOnTaskBar = true;
+		//Application->MainFormOnTaskBar = true;
 		Application->CreateForm(__classid(TMainForm), &MainForm);
 		Application->CreateForm(__classid(TAboutBox), &AboutBox);
 		ShowWindow(Application->Handle, SW_HIDE);

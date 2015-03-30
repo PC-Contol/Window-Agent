@@ -21,7 +21,7 @@ void __fastcall SystemInfoThread::Execute()
 	GetSystemInfo();
 	while (!this->Terminated)
 	{
-		if (GetTickCount() - siTick > 6 * 1000)
+		if (GetTickCount() - siTick > 1000 * 60 * 5)
 		{
 			GetSystemInfo();
 			siTick = GetTickCount();

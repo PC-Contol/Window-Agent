@@ -6,7 +6,7 @@
 #include <jpeg.hpp>
 #include "MainUnit.h"
 #include "WebServerThread.h"
-#include "VolumeControlcpp.h"
+#include "VolumeControl.h"
 #pragma package(smart_init)
 //---------------------------------------------------------------------------
 SystemInfo *si;
@@ -196,7 +196,7 @@ void __fastcall WebServerThread::ProcCMD(String LFileName, TIdHTTPResponseInfo *
 	}
 	else if(LFileName.UpperCase() == "GET_SYSTEMINFO")
 	{
- 		TJSONObject *result = new TJSONObject();
+		TJSONObject *result = new TJSONObject();
 		result->AddPair(new TJSONPair("result", "success") );
 		result->AddPair(new TJSONPair("cpu", si->UseCpu) );
 		result->AddPair(new TJSONPair("rem-total", si->Mem.Total) );
@@ -207,7 +207,24 @@ void __fastcall WebServerThread::ProcCMD(String LFileName, TIdHTTPResponseInfo *
 	   //	AResponseInfo->ResponseNo = 404;
 		AResponseInfo->ContentText =  result->ToJSON() ;
 		AResponseInfo->WriteContent();
-    }
+	}
+	else if(LFileName.UpperCase() == "SET_MONITOR_ON")
+	{
+		SendMessage(HWND_BROADCAST, WM_SYSCOMMAND, SC_MONITORPOWER, -1);
+	}
+	else if(LFileName.UpperCase() == "SET_MONITOR_OFF")
+	{
+		SendMessage(HWND_BROADCAST, WM_SYSCOMMAND, SC_MONITORPOWER, 2);
+	}
+	else if(LFileName.UpperCase() == "GET_MONITOR_ONOFF")
+	{
+		TJSONObject *result = new TJSONObject();
+		result->AddPair(new TJSONPair("result", "success") );
+		result->AddPair(new TJSONPair("monitoer", "") );
+		AResponseInfo->ContentType ="application/json";
+		AResponseInfo->ContentText =  result->ToJSON() ;
+		AResponseInfo->WriteContent();
+	}
 	else
 	{
 		TJSONObject *result = new TJSONObject();
@@ -217,9 +234,6 @@ void __fastcall WebServerThread::ProcCMD(String LFileName, TIdHTTPResponseInfo *
 		AResponseInfo->ContentText =  result->ToJSON() ;
 		AResponseInfo->WriteContent();
 	}
-
-
-
 }
 
 

@@ -175,8 +175,8 @@
             <DependentOn>SystemInfoThread.h</DependentOn>
             <BuildOrder>6</BuildOrder>
         </CppCompile>
-        <CppCompile Include="VolumeControlcpp.cpp">
-            <DependentOn>VolumeControlcpp.h</DependentOn>
+        <CppCompile Include="VolumeControl.cpp">
+            <DependentOn>VolumeControl.h</DependentOn>
             <BuildOrder>5</BuildOrder>
         </CppCompile>
         <CppCompile Include="WebServerThread.cpp">

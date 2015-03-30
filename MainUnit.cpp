@@ -89,3 +89,9 @@ void __fastcall TMainForm::FormCreate(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+
+void __fastcall TMainForm::WMDiaplayChange(TMessage& Msg)
+{
+
+}
+
