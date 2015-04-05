@@ -46,16 +46,21 @@ void __fastcall WebServerThread::IdHTTPServer1CommandGet(TIdContext *AContext,
 		AnsiString(ARequestInfo->Document).c_str(),
 		AnsiString(ARequestInfo->RemoteIP).c_str());
 
-//MainForm->Memo1->Lines->Add(str);
+	MainForm->LogMemoAdd(str);
 //	if(MainForm->Memo1->Perform(EM_LINEFROMCHAR, MainForm->Memo1->SelStart, 0) > 400) MainForm->Memo1->Clear();
 
 	AnsiString LFileName;
 	LFileName = ARequestInfo->Document;
-
-	if(LFileName.SubString(2, 3).UpperCase() == "CMD")
+	TStrings *params = 	ARequestInfo->Params;
+	MainForm->LogMemoAdd(ARequestInfo->URI);
+	ProcCMD(params, AResponseInfo);
+	//if(LFileName.SubString(2, 3).UpperCase() == "CMD")
 	{
-		ProcCMD(LFileName.SubString(6, LFileName.Length()), AResponseInfo);
+		//ProcCMD(LFileName.SubString(6, LFileName.Length()), AResponseInfo);
+		//ProcCMD(params, AResponseInfo);
 	}
+	//AContext->
+	//AContext->Connection->Disconnect();
 
 }
 //---------------------------------------------------------------------------
@@ -79,64 +84,59 @@ void __fastcall WebServerThread::MyShutDownSystem(int iFlag)
 
 }
 
-void __fastcall WebServerThread::ProcCMD(String LFileName, TIdHTTPResponseInfo *AResponseInfo)
+void __fastcall WebServerThread::ProcCMD(TStrings * prams, TIdHTTPResponseInfo *AResponseInfo)
 {
+	for(int i = 0; i < prams->Count; i++)
+		MainForm->LogMemoAdd("[" + IntToStr(i) + "] " + prams->Names[i] + " : " + prams->Values[prams->Names[i]] );
 
-	if(LFileName.UpperCase() == "SHUTDOWN")
+	AnsiString cmd = prams->Values["cmd"].UpperCase();
+	TJSONObject *result = new TJSONObject();
+	AResponseInfo->ContentEncoding = "UTF-8";
+	AResponseInfo->ContentType = "application/json";
+
+	if(cmd == "SHUTDOWN")
 	{
-		TJSONObject *result = new TJSONObject();
 		result->AddPair(new TJSONPair("result", "success") );
-		result->AddPair(new TJSONPair("cmd",LFileName) );
+		result->AddPair(new TJSONPair("cmd",cmd) );
 
-		AResponseInfo->ContentType ="application/json ";
-		AResponseInfo->ContentText =  result->ToJSON() ;
-		AResponseInfo->WriteContent();
+		AResponseInfo->ContentText =  prams->Values["callback"]+"("+result->ToJSON()+")";
 
 		MyShutDownSystem(EWX_SHUTDOWN);
 	}
-	else if(LFileName.UpperCase() == "REBOOT")
+	else if(cmd == "REBOOT")
 	{
-		TJSONObject *result = new TJSONObject();
 		result->AddPair(new TJSONPair("result", "success") );
-		result->AddPair(new TJSONPair("cmd",LFileName) );
+		result->AddPair(new TJSONPair("cmd",cmd) );
 
-		AResponseInfo->ContentType ="application/json ";
-		AResponseInfo->ContentText =  result->ToJSON() ;
-		AResponseInfo->WriteContent();
+		AResponseInfo->ContentText =  prams->Values["callback"]+"("+result->ToJSON()+")";
 
 		MyShutDownSystem(EWX_REBOOT);
 	}
-	else if(LFileName.UpperCase().SubString(0, 7) == "SET_VOL")
+	else if(cmd == "SET_VOL")
 	{
-		AnsiString sVol =  LFileName.UpperCase().SubString(9,LFileName.Length() );
+		AnsiString sVol =  prams->Values["val"];
 		ChangeVolume((double)sVol.ToDouble()/100, true);
 
-		TJSONObject *result = new TJSONObject();
 		result->AddPair(new TJSONPair("result", "success") );
 		result->AddPair(new TJSONPair("preVolume", GetVolume() * 100 ) );
 		result->AddPair(new TJSONPair("setVolume", sVol) );
 
-		AResponseInfo->ContentType ="application/json ";
-		AResponseInfo->ContentText =  result->ToJSON() ;
-		AResponseInfo->WriteContent();
+		AResponseInfo->ContentText =  prams->Values["callback"]+"("+result->ToJSON()+")";
 	}
-	else if(LFileName.UpperCase().SubString(0, 7) == "GET_VOL")
+	else if(cmd == "GET_VOL")
 	{
-		TJSONObject *result = new TJSONObject();
 		result->AddPair(new TJSONPair("result", "success") );
 		result->AddPair(new TJSONPair("volume", GetVolume()) );
 
-		AResponseInfo->ContentType ="application/json ";
-		AResponseInfo->ContentText =  result->ToJSON() ;
-		AResponseInfo->WriteContent();
+
+		AResponseInfo->ContentText =  prams->Values["callback"]+"("+result->ToJSON()+")";
 	}
-	else if(LFileName.UpperCase() == "GET_RESOLUTION")
+	else if(cmd == "GET_RESOLUTION")
 	{
 		MONITORINFOEXW MonitorInfoEx;
 
-		TJSONObject *resolution = new TJSONObject();
-		resolution->AddPair(new TJSONPair("result", "success") );
-		resolution->AddPair(new TJSONPair("monitor_count",Screen->MonitorCount) );
+		result->AddPair(new TJSONPair("result", "success") );
+		result->AddPair(new TJSONPair("monitor_count",Screen->MonitorCount) );
 
 		TJSONArray *monitors = new TJSONArray();
 		MonitorInfoEx.cbSize = sizeof(MONITORINFOEXW);
@@ -150,12 +150,11 @@ void __fastcall WebServerThread::ProcCMD(String LFileName, TIdHTTPResponseInfo *
 			monitor->AddPair(new TJSONPair("height",Screen->Monitors[i]->Height));
 			monitors->Add(monitor);
 		}
-		resolution->AddPair("monitor", monitors);
-	   	AResponseInfo->ContentType ="application/json ";
-		AResponseInfo->ContentText =  resolution->ToJSON() ;
-		AResponseInfo->WriteContent();
+		result->AddPair("monitor", monitors);
+
+		AResponseInfo->ContentText =  prams->Values["callback"]+"("+result->ToJSON()+")";
 	}
-	else if(LFileName.UpperCase() == "GET_DESKTOP.JPG")
+	else if(cmd == "GET_DESKTOP.JPG")
 	{
 		int Monitor = 0;
 		Graphics::TBitmap *bmp = new Graphics::TBitmap;
@@ -194,46 +193,52 @@ void __fastcall WebServerThread::ProcCMD(String LFileName, TIdHTTPResponseInfo *
 			bmp->Free();
 		}
 	}
-	else if(LFileName.UpperCase() == "GET_SYSTEMINFO")
+	else if(cmd == "GET_SYSTEMINFO")
 	{
-		TJSONObject *result = new TJSONObject();
 		result->AddPair(new TJSONPair("result", "success") );
 		result->AddPair(new TJSONPair("cpu", si->UseCpu) );
 		result->AddPair(new TJSONPair("rem-total", si->Mem.Total) );
 		result->AddPair(new TJSONPair("rem-use", si->Mem.Use) );
 		result->AddPair(new TJSONPair("hdd-total", si->Hdd.Total) );
 		result->AddPair(new TJSONPair("hdd-use", si->Hdd.Use) );
-		AResponseInfo->ContentType ="application/json";
-	   //	AResponseInfo->ResponseNo = 404;
-		AResponseInfo->ContentText =  result->ToJSON() ;
-		AResponseInfo->WriteContent();
+		AResponseInfo->ContentText =  prams->Values["callback"]+"("+result->ToJSON()+")";
 	}
-	else if(LFileName.UpperCase() == "SET_MONITOR_ON")
+	else if(cmd == "SET_MONITOR_ON")
 	{
+		result->AddPair(new TJSONPair("result", "success") );
+		result->AddPair(new TJSONPair("cmd",cmd) );
+
+		AResponseInfo->ContentText =  prams->Values["callback"]+"("+result->ToJSON()+")";
+
 		SendMessage(HWND_BROADCAST, WM_SYSCOMMAND, SC_MONITORPOWER, -1);
 	}
-	else if(LFileName.UpperCase() == "SET_MONITOR_OFF")
+	else if(cmd == "SET_MONITOR_OFF")
 	{
+
+		result->AddPair(new TJSONPair("result", "success") );
+		result->AddPair(new TJSONPair("cmd",cmd) );
+
+		AResponseInfo->ContentText =  prams->Values["callback"]+"("+result->ToJSON()+")";
+
 		SendMessage(HWND_BROADCAST, WM_SYSCOMMAND, SC_MONITORPOWER, 2);
 	}
-	else if(LFileName.UpperCase() == "GET_MONITOR_ONOFF")
+	else if(cmd == "GET_MONITOR_ONOFF")
 	{
-		TJSONObject *result = new TJSONObject();
 		result->AddPair(new TJSONPair("result", "success") );
 		result->AddPair(new TJSONPair("monitoer", "") );
-		AResponseInfo->ContentType ="application/json";
-		AResponseInfo->ContentText =  result->ToJSON() ;
-		AResponseInfo->WriteContent();
+
+		AResponseInfo->ContentText =  prams->Values["callback"]+"("+result->ToJSON()+")";
 	}
 	else
 	{
-		TJSONObject *result = new TJSONObject();
 		result->AddPair(new TJSONPair("result", "failed") );
-		AResponseInfo->ContentType ="application/json";
+
 		AResponseInfo->ResponseNo = 404;
-		AResponseInfo->ContentText =  result->ToJSON() ;
-		AResponseInfo->WriteContent();
+		AResponseInfo->ContentText =  prams->Values["callback"]+"("+result->ToJSON()+")";
 	}
+
+
 }
+
 
 

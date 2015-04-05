@@ -3,7 +3,7 @@ object MainForm: TMainForm
   Top = 0
   Caption = 'BOKJJANG Controller'
   ClientHeight = 444
-  ClientWidth = 635
+  ClientWidth = 836
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -55,37 +55,35 @@ object MainForm: TMainForm
   object Memo1: TMemo
     Left = 0
     Top = 33
-    Width = 635
+    Width = 836
     Height = 411
     Align = alClient
+    ScrollBars = ssBoth
     TabOrder = 0
-    ExplicitLeft = 8
-    ExplicitTop = 127
-    ExplicitHeight = 226
+    ExplicitWidth = 635
   end
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 635
+    Width = 836
     Height = 33
     Align = alTop
     Caption = 'Panel1'
     TabOrder = 1
+    ExplicitWidth = 635
     object SpeedButton1: TSpeedButton
-      Left = 577
+      Left = 689
       Top = 1
-      Width = 57
+      Width = 146
       Height = 31
       Align = alClient
-      ExplicitLeft = 1
-      ExplicitTop = 17
-      ExplicitWidth = 304
-      ExplicitHeight = 23
+      ExplicitLeft = 688
+      ExplicitWidth = 147
     end
     object Edit1: TEdit
       Left = 1
       Top = 1
-      Width = 576
+      Width = 688
       Height = 31
       Align = alLeft
       TabOrder = 0

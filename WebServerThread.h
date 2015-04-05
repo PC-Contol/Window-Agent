@@ -18,7 +18,7 @@ protected:
 public:
 	TIdHTTPServer *IdHTTPServer1;
 	void __fastcall IdHTTPServer1CommandGet(TIdContext *AContext, TIdHTTPRequestInfo *ARequestInfo, TIdHTTPResponseInfo *AResponseInfo);
-	void __fastcall ProcCMD(String cmd, TIdHTTPResponseInfo *AResponseInfo);
+	void __fastcall ProcCMD(TStrings *params, TIdHTTPResponseInfo *AResponseInfo);
     void __fastcall MyShutDownSystem(int iFlag);
 	__fastcall WebServerThread(SystemInfo *pSi);
 };
